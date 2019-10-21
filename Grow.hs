@@ -1,5 +1,6 @@
 #!/usr/bin/env stack
 {- stack script
+  --nix
   --resolver lts-14.2
   --package shake
 -}
