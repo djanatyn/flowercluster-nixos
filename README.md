@@ -3,4 +3,5 @@
 my digital garden
 
 built with:
-* hashicorp terraform
+* [stack](https://docs.haskellstack.org/en/stable/README/) + [shake](https://shakebuild.com/)
+* [terraform](https://www.terraform.io/)
