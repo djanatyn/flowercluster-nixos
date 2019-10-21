@@ -16,6 +16,10 @@ main = shakeArgs shakeOptions $ do
     putNormal "initializing terraform"
     cmd (Cwd "terraform") "terraform init"
 
+  phony "clean" $ do
+    putNormal "cleaning"
+    removeFilesAfter "_build" ["//*"]
+
   "_build/output.json" %> \out -> do
     Stdout output <- cmd (Cwd "terraform") "terraform output -json"
     writeFileChanged "_build/output.json" output
