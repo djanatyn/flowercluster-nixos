@@ -1,2 +1,4 @@
 *.log
 .terraform
+_build
+.*
