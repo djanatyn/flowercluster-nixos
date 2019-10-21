@@ -9,14 +9,14 @@
 {-# LANGUAGE OverloadedStrings, ExtendedDefaultRules, RecordWildCards #-}
 module Grow where
 
-import Development.Shake
-import Development.Shake.FilePath
+import           Development.Shake
+import           Development.Shake.FilePath
 
-import qualified Data.ByteString.Lazy as BL
+import qualified Data.ByteString.Lazy          as BL
 
-import Data.Aeson
+import           Data.Aeson
 
-import Data.Text
+import           Data.Text
 
 type ID = String
 
