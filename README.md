@@ -10,3 +10,6 @@ to build:
 ``` sh
 ./Grow.hs
 ```
+
+The Grow module runs build tooling, parses manifest artifacts, and bootstraps
+itself when stack is installed and configured.
