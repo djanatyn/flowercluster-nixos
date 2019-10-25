@@ -1,0 +1,14 @@
+---
+name: "grow"
+author: "Jonathan Strickland"
+
+dependencies:
+  - base
+  - shake
+  - aeson
+  - text
+  - bytestring
+
+library:
+  source-dirs:
+    - .
