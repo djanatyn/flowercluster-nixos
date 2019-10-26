@@ -7,6 +7,7 @@
   --package bytestring
 -}
 {-# LANGUAGE OverloadedStrings, ExtendedDefaultRules, RecordWildCards #-}
+{-# OPTIONS_HADDOCK ignore-exports #-}
 module Grow where
 
 import           Development.Shake
@@ -31,10 +32,30 @@ main = shakeArgs shakeOptions $ do
 
   "_build/network-output.json" %> runTerraform . Output
 
+-- * Types
 -- | AWS resource IDs are Strings.
 type ID = String
 
--- | Terraform network module output.
+-- * Terraform
+-- ** Executing Commands
+-- Terraform actions.
+data TerraformCmd = Init | Plan FilePath | Output FilePath
+
+-- | Execute arbitrary Terraform command.
+rawTerraformCmd :: CmdResult r => String -> Action r
+rawTerraformCmd args = do
+  putQuiet $ "executing '" ++ command ++ "'"
+  cmd (Cwd "terraform") command where
+    command = "terraform " ++ args
+
+-- | Execute Terraform command.
+runTerraform :: CmdResult r => TerraformCmd -> Action r
+runTerraform Init          = rawTerraformCmd "init"
+runTerraform (Plan path)   = rawTerraformCmd $ "plan -out=" ++ path
+runTerraform (Output path) = rawTerraformCmd "output -json"
+
+-- ** Terraform Outputs
+-- Terraform network module output.
 data NetworkModule = NetworkModule
   { vpcID :: ID
   , dmzID :: ID
@@ -49,29 +70,13 @@ instance FromJSON NetworkModule where
 
     return NetworkModule {..}
 
--- | Terraform actions exposed.
-data TerraformCmd = Init | Plan FilePath | Output FilePath
-
 -- | Read Terraform network module output.
-readNetworkOutput ::
-  FilePath -> -- ^ json file
-  Action (Maybe NetworkModule)
+readNetworkOutput
+  :: FilePath -- ^ json file
+  -> Action (Maybe NetworkModule)
 readNetworkOutput path = do
   json <- liftIO $ BL.readFile path
   return $ decode json
-
--- | Execute Terraform command.
-runTerraform :: CmdResult r => TerraformCmd -> Action r
-runTerraform Init          = rawTerraformCmd "init"
-runTerraform (Plan path)   = rawTerraformCmd $ "plan -out=" ++ path
-runTerraform (Output path) = rawTerraformCmd "output -json"
-
--- | Execute arbitrary Terraform command.
-rawTerraformCmd :: CmdResult r => String -> Action r
-rawTerraformCmd args = do
-  putQuiet $ "executing '" ++ command ++ "'"
-  cmd (Cwd "terraform") command where
-    command = "terraform " ++ args
 
 -- | Write Terraform output to path.
 terraformOutput :: FilePath -> Action ()
