@@ -36,6 +36,9 @@ instance FromJSON NetworkModule where
 
     return NetworkModule {..}
 
+-- | Terraform actions exposed.
+data TerraformCmd = Init | Plan FilePath | Output FilePath
+
 -- | Read Terraform network module output.
 readNetworkOutput ::
   FilePath -> -- ^ json file
@@ -45,6 +48,12 @@ readNetworkOutput path = do
   return $ decode json
 
 -- | Execute Terraform command.
+runTerraform :: CmdResult r => TerraformCmd -> Action r
+runTerraform Init          = terraformCmd "init"
+runTerraform (Plan path)   = terraformCmd $ "plan -out=" ++ path
+runTerraform (Output path) = terraformCmd "output -json"
+
+-- | Execute arbitrary Terraform command.
 terraformCmd :: CmdResult r => String -> Action r
 terraformCmd args = do
   putQuiet $ "executing '" ++ command ++ "'"
@@ -67,7 +76,7 @@ main :: IO ()
 main = shakeArgs shakeOptions $ do
   want ["_build/network-output.json"]
 
-  phony "init" $ terraformCmd "init"
+  phony "init" $ runTerraform Init
 
   phony "clean" $ clean
 
@@ -76,4 +85,4 @@ main = shakeArgs shakeOptions $ do
     networkOutput <- readNetworkOutput "_build/network-output.json"
     putNormal $ show networkOutput
 
-  "_build/network-output.json" %> terraformOutput
+  "_build/network-output.json" %> runTerraform . Output
