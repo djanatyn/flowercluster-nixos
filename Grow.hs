@@ -18,6 +18,21 @@ import           Data.Aeson
 
 import           qualified Data.Text as T
 
+main :: IO ()
+main = shakeArgs shakeOptions $ do
+  want ["_build/network-output.json"]
+
+  phony "init" $ runTerraform Init
+
+  phony "clean" $ clean
+
+  phony "output" $ do
+    need ["_build/output.json"]
+    networkOutput <- readNetworkOutput "_build/network-output.json"
+    putNormal $ show networkOutput
+
+  "_build/network-output.json" %> runTerraform . Output
+
 -- | AWS resource IDs are Strings.
 type ID = String
 
@@ -71,18 +86,3 @@ clean :: Action ()
 clean = do
   putQuiet $ "cleaning build directory"
   removeFilesAfter "_build" ["//*"]
-
-main :: IO ()
-main = shakeArgs shakeOptions $ do
-  want ["_build/network-output.json"]
-
-  phony "init" $ runTerraform Init
-
-  phony "clean" $ clean
-
-  phony "output" $ do
-    need ["_build/output.json"]
-    networkOutput <- readNetworkOutput "_build/network-output.json"
-    putNormal $ show networkOutput
-
-  "_build/network-output.json" %> runTerraform . Output
