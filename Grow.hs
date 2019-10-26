@@ -16,15 +16,18 @@ import qualified Data.ByteString.Lazy          as BL
 
 import           Data.Aeson
 
-import           Data.Text
+import           qualified Data.Text as T
 
+-- | AWS resource IDs are Strings.
 type ID = String
 
+-- | Terraform network module output.
 data NetworkModule = NetworkModule
   { vpcID :: ID
   , dmzID :: ID
   , internalID :: ID } deriving (Show)
 
+-- | Parse Terraform output JSON.
 instance FromJSON NetworkModule where
   parseJSON = withObject "output" $ \o -> do
     vpcID      <- o .: "vpc_id"  >>= (.: "value")
@@ -33,24 +36,44 @@ instance FromJSON NetworkModule where
 
     return NetworkModule {..}
 
+-- | Read Terraform network module output.
+readNetworkOutput ::
+  FilePath -> -- ^ json file
+  Action (Maybe NetworkModule)
+readNetworkOutput path = do
+  json <- liftIO $ BL.readFile path
+  return $ decode json
+
+-- | Execute Terraform command.
+terraformCmd :: CmdResult r => String -> Action r
+terraformCmd args = do
+  putQuiet $ "executing '" ++ command ++ "'"
+  cmd (Cwd "terraform") command where
+    command = "terraform " ++ args
+
+-- | Write Terraform output to path.
+terraformOutput :: FilePath -> Action ()
+terraformOutput path = do
+  Stdout output <- terraformCmd "output -json"
+  writeFileChanged path output
+
+-- | Clean build directory.
+clean :: Action ()
+clean = do
+  putQuiet $ "cleaning build directory"
+  removeFilesAfter "_build" ["//*"]
+
 main :: IO ()
 main = shakeArgs shakeOptions $ do
-  want ["_build/output.json"]
+  want ["_build/network-output.json"]
 
-  phony "init" $ do
-    putNormal "initializing terraform"
-    cmd (Cwd "terraform") "terraform init" :: Action ()
+  phony "init" $ terraformCmd "init"
 
-  phony "clean" $ do
-    putNormal "cleaning"
-    removeFilesAfter "_build" ["//*"]
+  phony "clean" $ clean
 
   phony "output" $ do
     need ["_build/output.json"]
+    networkOutput <- readNetworkOutput "_build/network-output.json"
+    putNormal $ show networkOutput
 
-    json <- liftIO $ BL.readFile "_build/output.json"
-    putNormal $ show $ (decode json :: Maybe NetworkModule)
-
-  "_build/output.json" %> \out -> do
-    Stdout output <- cmd (Cwd "terraform") "terraform output -json"
-    writeFileChanged "_build/output.json" output
+  "_build/network-output.json" %> terraformOutput
