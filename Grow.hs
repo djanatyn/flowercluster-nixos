@@ -84,6 +84,19 @@ terraformOutput path = do
   Stdout output <- rawTerraformCmd "output -json"
   writeFileChanged path output
 
+-- * Packer
+-- ** Packer Environment
+-- Set environment variables for a packer build.
+packerEnv :: NetworkModule -> [CmdOption]
+packerEnv NetworkModule {..} =
+  [ AddEnv "PACKER_BUILD_SUBNET" dmzID ]
+
+rawPackerCommand :: CmdResult r => String -> Action r
+rawPackerCommand args = do
+  putQuiet $ "executing Packer: " ++ command
+  cmd (Cwd "packer") command where
+    command = "packer " ++ args
+
 -- | Clean build directory.
 clean :: Action ()
 clean = do
