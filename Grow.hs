@@ -62,13 +62,13 @@ readNetworkOutput path = do
 
 -- | Execute Terraform command.
 runTerraform :: CmdResult r => TerraformCmd -> Action r
-runTerraform Init          = terraformCmd "init"
-runTerraform (Plan path)   = terraformCmd $ "plan -out=" ++ path
-runTerraform (Output path) = terraformCmd "output -json"
+runTerraform Init          = rawTerraformCmd "init"
+runTerraform (Plan path)   = rawTerraformCmd $ "plan -out=" ++ path
+runTerraform (Output path) = rawTerraformCmd "output -json"
 
 -- | Execute arbitrary Terraform command.
-terraformCmd :: CmdResult r => String -> Action r
-terraformCmd args = do
+rawTerraformCmd :: CmdResult r => String -> Action r
+rawTerraformCmd args = do
   putQuiet $ "executing '" ++ command ++ "'"
   cmd (Cwd "terraform") command where
     command = "terraform " ++ args
@@ -76,7 +76,7 @@ terraformCmd args = do
 -- | Write Terraform output to path.
 terraformOutput :: FilePath -> Action ()
 terraformOutput path = do
-  Stdout output <- terraformCmd "output -json"
+  Stdout output <- rawTerraformCmd "output -json"
   writeFileChanged path output
 
 -- | Clean build directory.
