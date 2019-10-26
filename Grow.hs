@@ -20,8 +20,6 @@ import           qualified Data.Text as T
 
 main :: IO ()
 main = shakeArgs shakeOptions $ do
-  want ["_build/network-output.json"]
-
   phony "init" $ runTerraform Init
 
   phony "clean" $ clean
