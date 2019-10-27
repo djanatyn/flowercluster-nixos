@@ -36,6 +36,10 @@ module Grow where
 
 import           Development.Shake
 import           Development.Shake.FilePath
+import           Data.Maybe                     ( isJust
+                                                , fromJust
+                                                )
+import           Control.Monad                  ( when )
 import           System.Directory               ( makeAbsolute )
 
 import qualified Data.ByteString.Lazy          as BL
@@ -62,6 +66,12 @@ main = shakeArgs shakeOptions $ do
     terraformOutput <- readTerraformOutput "_build/terraformOutput.json"
     putNormal $ show terraformOutput
 
+  phony "build" $ do
+    need ["_build/terraformOutput.json"]
+    terraformOutput <- readTerraformOutput "_build/terraformOutput.json"
+    when (isJust terraformOutput)
+      $ runPacker (fromJust terraformOutput) (Build "nixos.json")
+
   "_build/terraformOutput.json" %> terraformOutput
 
   "_build/grow.plan" %> runTerraform . Plan
@@ -78,18 +88,18 @@ clean = do
 type ID = String
 
 -- * Terraform
--- ** Executing Commands
+-- ** Running Commands
 -- Terraform actions.
 data TerraformCmd = Init | Plan FilePath | Apply FilePath | Output FilePath
 
--- | Execute arbitrary Terraform command.
+-- | Run arbitrary Terraform command.
 rawTerraformCmd :: CmdResult r => String -> Action r
 rawTerraformCmd args = do
   putQuiet $ "executing '" ++ command ++ "'"
   cmd (Cwd "terraform") command
   where command = "terraform " ++ args
 
--- | Execute Terraform command.
+-- | Run Terraform command.
 runTerraform :: CmdResult r => TerraformCmd -> Action r
 runTerraform Init          = rawTerraformCmd "init"
 runTerraform (Output path) = rawTerraformCmd "output -json"
@@ -134,14 +144,28 @@ terraformOutput path = do
   writeFileChanged path output
 
 -- * Packer
--- ** Packer Environment
--- | Set environment variables for a packer build.
-packerEnv :: TerraformOutput -> [CmdOption]
-packerEnv TerraformOutput {..} = [AddEnv "PACKER_BUILD_SUBNET" dmzID]
+-- ** Running Commands
+-- | Packer actions.
+data PackerCmd = Build FilePath
 
 -- | Run arbitary Packer command.
-rawPackerCommand :: CmdResult r => String -> Action r
-rawPackerCommand args = do
-  putQuiet $ "executing Packer: " ++ command
-  cmd (Cwd "packer") command
-  where command = "packer " ++ args
+rawPackerCommand :: CmdResult r => TerraformOutput -> String -> Action r
+rawPackerCommand env args = do
+  putQuiet $ "executing Packer: " ++ packerCmd
+  cmd cmdEnv packerCmd where
+  cmdEnv :: [CmdOption]
+  cmdEnv = (Cwd "packer") : (packerEnv env)
+  packerCmd :: String
+  packerCmd = "packer " ++ args
+
+-- | Run Packer command.
+runPacker :: CmdResult r => TerraformOutput -> PackerCmd -> Action r
+runPacker env (Build path) = do
+  rawPackerCommand env $ "build " ++ path
+
+-- | Set environment variables for a packer build.
+packerEnv :: TerraformOutput -> [CmdOption]
+packerEnv TerraformOutput {..} =
+  [ AddEnv "PACKER_BUILD_SUBNET"   dmzID
+  , AddEnv "PACKER_SECURITY_GROUP" dmzSSHSecurityGroupID
+  ]
