@@ -23,3 +23,19 @@ resource "aws_subnet" "internal" {
     Name = "internal"
   }
 }
+
+resource "aws_security_group" "dmz_ssh" {
+  name        = "default-dmz"
+  description = "Allow SSH into DMZ subnet."
+  vpc_id      = aws_vpc.main.id
+}
+
+resource "aws_security_group_rule" "dmz_ssh" {
+  type      = "ingress"
+  from_port = 22
+  to_port   = 22
+  protocol  = "tcp"
+
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.dmz_ssh.id
+}

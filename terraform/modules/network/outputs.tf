@@ -8,3 +8,9 @@ output "subnets" {
     internal = aws_subnet.internal.id
   }
 }
+
+output "security_groups" {
+  value = {
+    dmz_ssh = aws_security_group.dmz_ssh.id
+  }
+}
