@@ -1,0 +1,33 @@
+{
+    "variables": {
+        "build_subnet": "{{ env `PACKER_BUILD_SUBNET` }}",
+        "build_security_group": "{{ env `PACKER_BUILD_SECURITY_GROUP` }}",
+        "nixos_config_path": "{{ env `PACKER_NIXOS_CONFIG_PATH` }}",
+        "image_prefix": "{{ env `PACKER_IMAGE_PREFIX` }}",
+        "aws_region": "us-east-1",
+        "TMPDIR": "/var/tmp/",
+        "name": "{{ user `image_prefix` }}-{{timestamp}}"
+    },
+    "builders": [
+        {
+            "type": "amazon-ebs",
+            "region": "{{ user `aws_region` }}",
+            "subnet_id": "{{ user `build_subnet` }}",
+            "security_group_id": "{{ user `build_security_group` }}",
+            "ami_name": "{{ user `name` }}",
+            "source_ami": "ami-02eac2c0129f6376b",
+            "instance_type": "t2.micro",
+            "ssh_username": "nixos",
+            "ssh_pty": true,
+            "ssh_interface": "public_ip",
+            "associate_public_ip_address": true 
+        }
+    ],
+    "post-processors": [
+        {
+            "type": "manifest",
+            "output": "{{ user `name` }}-manifest.json",
+            "strip_path": true
+        }
+    ]
+}
