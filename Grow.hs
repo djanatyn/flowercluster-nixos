@@ -17,7 +17,7 @@ This module compiles to a build system used to maintain flowercluster, a digital
 garden.
 
 The build system manages tasks such as:
-  
+
   * building infrastructure from Terraform modules,
   * parsing Terraform output files,
   * building AMI images from Packer templates,
@@ -105,14 +105,17 @@ runTerraform (Apply path) = do
 data TerraformOutput = TerraformOutput
   { vpcID :: ID
   , dmzID :: ID
-  , internalID :: ID } deriving (Show)
+  , internalID :: ID
+  , dmzSSHSecurityGroupID :: ID } deriving (Show)
 
 -- | Parse Terraform output JSON.
 instance FromJSON TerraformOutput where
   parseJSON = withObject "output" $ \o -> do
-    vpcID      <- o .: "vpc_id" >>= (.: "value")
-    internalID <- o .: "subnets" >>= (.: "value") >>= (.: "internal")
-    dmzID      <- o .: "subnets" >>= (.: "value") >>= (.: "dmz")
+    vpcID                 <- o .: "vpc_id" >>= (.: "value")
+    internalID            <- o .: "subnets" >>= (.: "value") >>= (.: "internal")
+    dmzID                 <- o .: "subnets" >>= (.: "value") >>= (.: "dmz")
+    dmzSSHSecurityGroupID <-
+      o .: "security_groups" >>= (.: "value") >>= (.: "dmz_ssh")
 
     return TerraformOutput { .. }
 
