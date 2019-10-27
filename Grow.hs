@@ -59,8 +59,8 @@ main = shakeArgs shakeOptions $ do
 
   phony "output" $ do
     need ["_build/output.json"]
-    networkOutput <- readNetworkOutput "_build/network-output.json"
-    putNormal $ show networkOutput
+    terraformOutput <- readTerraformOutput "_build/network-output.json"
+    putNormal $ show terraformOutput
 
   "_build/network-output.json" %> runTerraform . Output
 
@@ -102,25 +102,25 @@ runTerraform (Apply path) = do
 
 -- ** Terraform Outputs
 -- Terraform network module output.
-data NetworkModule = NetworkModule
+data TerraformOutput = TerraformOutput
   { vpcID :: ID
   , dmzID :: ID
   , internalID :: ID } deriving (Show)
 
 -- | Parse Terraform output JSON.
-instance FromJSON NetworkModule where
+instance FromJSON TerraformOutput where
   parseJSON = withObject "output" $ \o -> do
     vpcID      <- o .: "vpc_id" >>= (.: "value")
     internalID <- o .: "subnets" >>= (.: "value") >>= (.: "internal")
     dmzID      <- o .: "subnets" >>= (.: "value") >>= (.: "dmz")
 
-    return NetworkModule { .. }
+    return TerraformOutput { .. }
 
--- | Read Terraform network module output.
-readNetworkOutput
+-- | Read Terraform module output.
+readTerraformOutput
   :: FilePath -- ^ json file
-  -> Action (Maybe NetworkModule)
-readNetworkOutput path = do
+  -> Action (Maybe TerraformOutput)
+readTerraformOutput path = do
   json <- liftIO $ BL.readFile path
   return $ decode json
 
@@ -133,8 +133,8 @@ terraformOutput path = do
 -- * Packer
 -- ** Packer Environment
 -- Set environment variables for a packer build.
-packerEnv :: NetworkModule -> [CmdOption]
-packerEnv NetworkModule {..} = [AddEnv "PACKER_BUILD_SUBNET" dmzID]
+packerEnv :: TerraformOutput -> [CmdOption]
+packerEnv TerraformOutput {..} = [AddEnv "PACKER_BUILD_SUBNET" dmzID]
 
 rawPackerCommand :: CmdResult r => String -> Action r
 rawPackerCommand args = do
