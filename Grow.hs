@@ -36,13 +36,13 @@ module Grow where
 
 import           Development.Shake
 import           Development.Shake.FilePath
-import System.Directory (makeAbsolute)
+import           System.Directory               ( makeAbsolute )
 
 import qualified Data.ByteString.Lazy          as BL
 
 import           Data.Aeson
 
-import           qualified Data.Text as T
+import qualified Data.Text                     as T
 
 -- | Flowercluster build system.
 main :: IO ()
@@ -56,7 +56,7 @@ main = shakeArgs shakeOptions $ do
   phony "apply" $ do
     need ["_build/grow.plan"]
     runTerraform $ Apply "_build/grow.plan"
-  
+
   phony "output" $ do
     need ["_build/output.json"]
     networkOutput <- readNetworkOutput "_build/network-output.json"
@@ -65,14 +65,14 @@ main = shakeArgs shakeOptions $ do
   "_build/network-output.json" %> runTerraform . Output
 
   "_build/grow.plan" %> runTerraform . Plan
-  
+
 -- * Build Tasks
 -- | Clean build directory.
 clean :: Action ()
 clean = do
   putQuiet $ "cleaning build directory"
   removeFilesAfter "_build" ["//*"]
-  
+
 -- * Types
 -- | AWS resource IDs are Strings.
 type ID = String
@@ -86,14 +86,14 @@ data TerraformCmd = Init | Plan FilePath | Apply FilePath | Output FilePath
 rawTerraformCmd :: CmdResult r => String -> Action r
 rawTerraformCmd args = do
   putQuiet $ "executing '" ++ command ++ "'"
-  cmd (Cwd "terraform") command where
-    command = "terraform " ++ args
+  cmd (Cwd "terraform") command
+  where command = "terraform " ++ args
 
 -- | Execute Terraform command.
 runTerraform :: CmdResult r => TerraformCmd -> Action r
 runTerraform Init          = rawTerraformCmd "init"
 runTerraform (Output path) = rawTerraformCmd "output -json"
-runTerraform (Plan path)   = do
+runTerraform (Plan   path) = do
   planPath <- liftIO $ makeAbsolute path
   rawTerraformCmd $ "plan -out=" ++ planPath where
 runTerraform (Apply path) = do
@@ -110,11 +110,11 @@ data NetworkModule = NetworkModule
 -- | Parse Terraform output JSON.
 instance FromJSON NetworkModule where
   parseJSON = withObject "output" $ \o -> do
-    vpcID      <- o .: "vpc_id"  >>= (.: "value")
+    vpcID      <- o .: "vpc_id" >>= (.: "value")
     internalID <- o .: "subnets" >>= (.: "value") >>= (.: "internal")
     dmzID      <- o .: "subnets" >>= (.: "value") >>= (.: "dmz")
 
-    return NetworkModule {..}
+    return NetworkModule { .. }
 
 -- | Read Terraform network module output.
 readNetworkOutput
@@ -134,11 +134,10 @@ terraformOutput path = do
 -- ** Packer Environment
 -- Set environment variables for a packer build.
 packerEnv :: NetworkModule -> [CmdOption]
-packerEnv NetworkModule {..} =
-  [ AddEnv "PACKER_BUILD_SUBNET" dmzID ]
+packerEnv NetworkModule {..} = [AddEnv "PACKER_BUILD_SUBNET" dmzID]
 
 rawPackerCommand :: CmdResult r => String -> Action r
 rawPackerCommand args = do
   putQuiet $ "executing Packer: " ++ command
-  cmd (Cwd "packer") command where
-    command = "packer " ++ args
+  cmd (Cwd "packer") command
+  where command = "packer " ++ args
