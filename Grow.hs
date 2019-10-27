@@ -58,11 +58,11 @@ main = shakeArgs shakeOptions $ do
     runTerraform $ Apply "_build/grow.plan"
 
   phony "output" $ do
-    need ["_build/output.json"]
-    terraformOutput <- readTerraformOutput "_build/network-output.json"
+    need ["_build/terraformOutput.json"]
+    terraformOutput <- readTerraformOutput "_build/terraformOutput.json"
     putNormal $ show terraformOutput
 
-  "_build/network-output.json" %> runTerraform . Output
+  "_build/terraformOutput.json" %> terraformOutput
 
   "_build/grow.plan" %> runTerraform . Plan
 
