@@ -8,6 +8,27 @@
 -}
 {-# LANGUAGE OverloadedStrings, ExtendedDefaultRules, RecordWildCards #-}
 {-# OPTIONS_HADDOCK ignore-exports #-}
+{-|
+Module      : Grow
+Description : Grows the infrastructure for flowercluster.
+
+This module compiles to a build system used to maintain flowercluster, a digital
+garden.
+
+The build system manages tasks such as:
+  
+  * building infrastructure from Terraform modules,
+  * parsing Terraform output files,
+  * building AMI images from Packer templates,
+  * parsing Packer manifest files.
+
+Why maintain a complex build system?
+
+  * Builds are reproducible: build artifacts can be reconstructed and updated
+  * Builds are safe: each action in a build rule is typed
+  * Builds are extensible: the build system is a Haskell library
+-}
+
 module Grow where
 
 import           Development.Shake
@@ -19,6 +40,7 @@ import           Data.Aeson
 
 import           qualified Data.Text as T
 
+-- | Flowercluster build system.
 main :: IO ()
 main = shakeArgs shakeOptions $ do
   phony "init" $ runTerraform Init
