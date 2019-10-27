@@ -53,7 +53,13 @@ main = shakeArgs shakeOptions $ do
     putNormal $ show networkOutput
 
   "_build/network-output.json" %> runTerraform . Output
-
+-- * Build Tasks
+-- | Clean build directory.
+clean :: Action ()
+clean = do
+  putQuiet $ "cleaning build directory"
+  removeFilesAfter "_build" ["//*"]
+  
 -- * Types
 -- | AWS resource IDs are Strings.
 type ID = String
@@ -118,9 +124,3 @@ rawPackerCommand args = do
   putQuiet $ "executing Packer: " ++ command
   cmd (Cwd "packer") command where
     command = "packer " ++ args
-
--- | Clean build directory.
-clean :: Action ()
-clean = do
-  putQuiet $ "cleaning build directory"
-  removeFilesAfter "_build" ["//*"]
