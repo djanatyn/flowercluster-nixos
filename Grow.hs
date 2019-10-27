@@ -23,7 +23,7 @@ The build system manages tasks such as:
   * building AMI images from Packer templates,
   * parsing Packer manifest files.
 
-Why maintain a complex build system?
+Why maintain this complex build system?
 
   * Builds are reproducible: build artifacts can be reconstructed and updated
   * Builds are safe: each action in a build rule is typed
