@@ -5,6 +5,7 @@ my digital garden
 built with:
 * [stack](https://docs.haskellstack.org/en/stable/README/) + [shake](https://shakebuild.com/)
 * [terraform](https://www.terraform.io/)
+* [packer](https://www.packer.io)
 
 to build:
 ``` sh

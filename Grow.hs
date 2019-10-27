@@ -135,10 +135,11 @@ terraformOutput path = do
 
 -- * Packer
 -- ** Packer Environment
--- Set environment variables for a packer build.
+-- | Set environment variables for a packer build.
 packerEnv :: TerraformOutput -> [CmdOption]
 packerEnv TerraformOutput {..} = [AddEnv "PACKER_BUILD_SUBNET" dmzID]
 
+-- | Run arbitary Packer command.
 rawPackerCommand :: CmdResult r => String -> Action r
 rawPackerCommand args = do
   putQuiet $ "executing Packer: " ++ command
