@@ -5,6 +5,7 @@
   --package aeson
   --package text
   --package bytestring
+  --package directory
 -}
 {-# LANGUAGE OverloadedStrings, ExtendedDefaultRules, RecordWildCards #-}
 {-# OPTIONS_HADDOCK ignore-exports #-}
@@ -35,6 +36,7 @@ module Grow where
 
 import           Development.Shake
 import           Development.Shake.FilePath
+import System.Directory (makeAbsolute)
 
 import qualified Data.ByteString.Lazy          as BL
 
@@ -49,12 +51,21 @@ main = shakeArgs shakeOptions $ do
 
   phony "clean" $ clean
 
+  phony "plan" $ runTerraform $ Plan "grow.plan"
+
+  phony "apply" $ do
+    need ["_build/grow.plan"]
+    runTerraform $ Apply "_build/grow.plan"
+  
   phony "output" $ do
     need ["_build/output.json"]
     networkOutput <- readNetworkOutput "_build/network-output.json"
     putNormal $ show networkOutput
 
   "_build/network-output.json" %> runTerraform . Output
+
+  "_build/grow.plan" %> runTerraform . Plan
+  
 -- * Build Tasks
 -- | Clean build directory.
 clean :: Action ()
@@ -69,7 +80,7 @@ type ID = String
 -- * Terraform
 -- ** Executing Commands
 -- Terraform actions.
-data TerraformCmd = Init | Plan FilePath | Output FilePath
+data TerraformCmd = Init | Plan FilePath | Apply FilePath | Output FilePath
 
 -- | Execute arbitrary Terraform command.
 rawTerraformCmd :: CmdResult r => String -> Action r
@@ -81,8 +92,13 @@ rawTerraformCmd args = do
 -- | Execute Terraform command.
 runTerraform :: CmdResult r => TerraformCmd -> Action r
 runTerraform Init          = rawTerraformCmd "init"
-runTerraform (Plan path)   = rawTerraformCmd $ "plan -out=" ++ path
 runTerraform (Output path) = rawTerraformCmd "output -json"
+runTerraform (Plan path)   = do
+  planPath <- liftIO $ makeAbsolute path
+  rawTerraformCmd $ "plan -out=" ++ planPath where
+runTerraform (Apply path) = do
+  planPath <- liftIO $ makeAbsolute path
+  rawTerraformCmd $ "apply " ++ planPath
 
 -- ** Terraform Outputs
 -- Terraform network module output.
