@@ -26,6 +26,8 @@ Why maintain a complex build system?
 
   * Builds are reproducible: build artifacts can be reconstructed and updated
   * Builds are safe: each action in a build rule is typed
+  * Builds are composable: complex build actions are defined by combining
+    smaller actions
   * Builds are extensible: the build system is a Haskell library
 -}
 
