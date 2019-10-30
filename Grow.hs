@@ -164,5 +164,6 @@ packerEnv :: TerraformOutput -> [CmdOption]
 packerEnv TerraformOutput {..} =
   [ AddEnv "PACKER_BUILD_SUBNET"   dmzID
   , AddEnv "PACKER_SECURITY_GROUP" dmzSSHSecurityGroupID
+  , AddEnv "PACKER_LOG" "1"
   , Cwd "packer"
   ]
