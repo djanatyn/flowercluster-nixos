@@ -151,12 +151,8 @@ data PackerCmd = Build FilePath
 -- | Run arbitary Packer command.
 rawPackerCommand :: CmdResult r => TerraformOutput -> String -> Action r
 rawPackerCommand env args = do
-  putQuiet $ "executing Packer: " ++ packerCmd
-  cmd cmdEnv packerCmd where
-  cmdEnv :: [CmdOption]
-  cmdEnv = (Cwd "packer") : (packerEnv env)
-  packerCmd :: String
-  packerCmd = "packer " ++ args
+  putQuiet $ "environment: " ++ show (packerEnv env)
+  cmd (packerEnv env) $ "packer " ++ args
 
 -- | Run Packer command.
 runPacker :: CmdResult r => TerraformOutput -> PackerCmd -> Action r
@@ -168,4 +164,5 @@ packerEnv :: TerraformOutput -> [CmdOption]
 packerEnv TerraformOutput {..} =
   [ AddEnv "PACKER_BUILD_SUBNET"   dmzID
   , AddEnv "PACKER_SECURITY_GROUP" dmzSSHSecurityGroupID
+  , Cwd "packer"
   ]
