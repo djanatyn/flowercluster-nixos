@@ -6,7 +6,8 @@
         "image_prefix": "{{ env `PACKER_IMAGE_PREFIX` }}",
         "aws_region": "us-east-1",
         "TMPDIR": "/var/tmp/",
-        "name": "{{ user `image_prefix` }}-{{timestamp}}"
+        "name": "{{ user `image_prefix` }}-{{timestamp}}",
+        "source_ami": "ami-0efc58fb70ae9a217"
     },
     "builders": [
         {
@@ -15,9 +16,9 @@
             "subnet_id": "{{ user `build_subnet` }}",
             "security_group_id": "{{ user `build_security_group` }}",
             "ami_name": "{{ user `name` }}",
-            "source_ami": "ami-02eac2c0129f6376b",
+            "source_ami": "{{ user `source_ami` }}",
             "instance_type": "t2.micro",
-            "ssh_username": "nixos",
+            "ssh_username": "root",
             "ssh_pty": true,
             "ssh_interface": "public_ip",
             "associate_public_ip_address": true 
