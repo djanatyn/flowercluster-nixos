@@ -8,9 +8,12 @@ built with:
 * [packer](https://www.packer.io)
 * [nixos](https://nixos.org/nixos)
 
-to build:
+to build, pick your favorite:
 ``` sh
-./Grow.hs
+stack build && stack exec grow --help
+```
+``` sh
+./Grow.hs --help
 ```
 ---
 
