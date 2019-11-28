@@ -15,7 +15,8 @@ stack build
 ```
 to build flowercluster:
 ``` sh
-stack build && stack exec grow --help
+stack build && \
+  stack exec -- grow build
 ```
 ---
 
