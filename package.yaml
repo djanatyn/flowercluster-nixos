@@ -13,7 +13,7 @@ dependencies:
 executables:
   grow:
     source-dirs:
-      - .
+      - grow
     ghc-options:
       - -main-is
       - Grow

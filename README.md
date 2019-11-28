@@ -8,12 +8,14 @@ built with:
 * [packer](https://www.packer.io)
 * [nixos](https://nixos.org/nixos)
 
-to build, pick your favorite:
+flowercluster uses shake for a build system. to compile the build system:
+
+```sh
+stack build
+```
+to build flowercluster:
 ``` sh
 stack build && stack exec grow --help
-```
-``` sh
-./Grow.hs --help
 ```
 ---
 
