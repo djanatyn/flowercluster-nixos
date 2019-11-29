@@ -37,7 +37,7 @@ clean = do
 
 -- | Flowercluster build system.
 main :: IO ()
-main = shakeArgs shakeOptions $ do
+main = shakeArgs shakeOptions {shakeColor = True} $ do
   terraformRules
   phony "clean" clean
   phony "build" $ do
