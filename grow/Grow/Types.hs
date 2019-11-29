@@ -17,10 +17,14 @@ module Grow.Types
 
     -- ** Build Actions
     PackerCmd (..),
+
+    -- ** Build Output
+    PackerManifest (..),
   )
 where
 
 import Data.Aeson
+import Data.Text (Text)
 
 -- | AWS IDs are Strings.
 type ID = String
@@ -56,6 +60,34 @@ instance FromJSON TerraformOutput where
         terraformInternalSubnet,
         terraformDMZSecurityGroup
       }
+
+data PackerManifest
+  = PackerManifest
+      { packerUUID :: Text,
+        packerBuilds :: [PackerBuild]
+      }
+
+data PackerBuild
+  = PackerBuild
+      { buildName :: Text,
+        buildTime :: Text,
+        buildArtifact :: Text,
+        buildUUID :: Text
+      }
+
+instance FromJSON PackerBuild where
+  parseJSON = withObject "build" $ \build -> do
+    buildName <- build .: "name"
+    buildTime <- build .: "build_time"
+    buildArtifact <- build .: "artifact_id"
+    buildUUID <- build .: "packer_run_uuid"
+    return PackerBuild {buildName, buildTime, buildArtifact, buildUUID}
+
+instance FromJSON PackerManifest where
+  parseJSON = withObject "manifest" $ \manifest -> do
+    packerBuilds <- manifest .: "builds"
+    packerUUID <- manifest .: "last_run_uuid"
+    return PackerManifest {packerBuilds, packerUUID}
 
 -- | Packer actions.
 data PackerCmd = Build FilePath

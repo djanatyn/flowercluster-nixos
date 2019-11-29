@@ -6,6 +6,8 @@ module Grow.Packer.Actions
   )
 where
 
+import Data.Aeson (decode)
+import qualified Data.ByteString.Lazy as BL
 import Development.Shake
 import Development.Shake.Command (IsCmdArgument)
 import Grow.Types
@@ -32,3 +34,9 @@ packerEnv TerraformOutput {terraformDMZSubnet, terraformDMZSecurityGroup} =
     AddEnv "PACKER_LOG" "1",
     Cwd "packer"
   ]
+
+readPackerManifest ::
+  -- | JSON Packer manifest path.
+  FilePath ->
+  Action (Maybe PackerManifest)
+readPackerManifest path = liftIO $ decode <$> BL.readFile path
