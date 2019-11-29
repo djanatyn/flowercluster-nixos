@@ -15,6 +15,9 @@ module Grow.Types
 
     -- * Packer
 
+    -- ** Build Configuration
+    PackerConfig (..),
+
     -- ** Build Actions
     PackerCmd (..),
 
@@ -66,6 +69,7 @@ data PackerManifest
       { packerUUID :: Text,
         packerBuilds :: [PackerBuild]
       }
+  deriving (Show)
 
 data PackerBuild
   = PackerBuild
@@ -74,6 +78,7 @@ data PackerBuild
         buildArtifact :: Text,
         buildUUID :: Text
       }
+  deriving (Show)
 
 instance FromJSON PackerBuild where
   parseJSON = withObject "build" $ \build -> do
@@ -88,6 +93,15 @@ instance FromJSON PackerManifest where
     packerBuilds <- manifest .: "builds"
     packerUUID <- manifest .: "last_run_uuid"
     return PackerManifest {packerBuilds, packerUUID}
+
+-- | Packer config.
+data PackerConfig
+  = PackerConfig
+      { packerEnv :: TerraformOutput,
+        packerManifestPath :: FilePath,
+        packerImageName :: String
+      }
+  deriving (Show)
 
 -- | Packer actions.
 data PackerCmd = Build FilePath

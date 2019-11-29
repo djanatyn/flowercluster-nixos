@@ -1,6 +1,3 @@
-{-# LANGUAGE NamedFieldPuns #-}
-{-# LANGUAGE OverloadedStrings #-}
-
 -- |
 -- Module      : Grow
 -- Description : Grows the infrastructure for flowercluster.
@@ -25,24 +22,8 @@
 module Grow where
 
 import Development.Shake
-import Grow.Packer.Actions
-import Grow.Terraform.Actions
-import Grow.Types
-
--- | Clean build directory.
-clean :: Action ()
-clean = do
-  putQuiet "cleaning build directory"
-  removeFilesAfter "_build" ["//*"]
+import Grow.Rules
 
 -- | Flowercluster build system.
 main :: IO ()
-main = shakeArgs shakeOptions {shakeColor = True} $ do
-  terraformRules
-  phony "clean" clean
-  phony "build" $ do
-    need ["_build/terraformOutput.json"]
-    out <- readTerraformOutput outputPath
-    case out of
-      Just env -> runPacker env (Build "nixos.json")
-      _ -> return ()
+main = shakeArgs shakeOptions {shakeColor = True} growRules

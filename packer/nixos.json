@@ -7,7 +7,8 @@
         "aws_region": "us-east-1",
         "TMPDIR": "/var/tmp/",
         "name": "{{ user `image_prefix` }}-{{timestamp}}",
-        "source_ami": "ami-0efc58fb70ae9a217"
+        "source_ami": "ami-0efc58fb70ae9a217",
+        "manifest_path": "{{ env `PACKER_MANIFEST_DIRECTORY` }}"
     },
     "builders": [
         {
@@ -27,7 +28,7 @@
     "post-processors": [
         {
             "type": "manifest",
-            "output": "{{ user `name` }}-manifest.json",
+            "output": "{{ user `manifest_path` }}",
             "strip_path": true
         }
     ]
