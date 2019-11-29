@@ -67,7 +67,7 @@ terraformRules = do
   -- | Initialize Terraform.
   phony "init" (runTerraform Init)
   -- | Build the managed Terraform plan file.
-  phony "plan" (runTerraform $ Plan "grow.plan")
+  phony "plan" (runTerraform $ Plan planPath)
   planPath %> runTerraform . Plan
   -- | Apply the managed Terraform plan file.
   phony "apply" $ do
