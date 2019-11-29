@@ -52,6 +52,10 @@ manifestPath = "_build/growManifest.json"
 
 packerRules :: Rules ()
 packerRules = do
+  phony "manifest" $ do
+    need [manifestPath]
+    out <- readPackerManifest manifestPath
+    putNormal (show out)
   manifestPath %> \packerManifestPath -> do
     need [T.outputPath]
     out <- T.readTerraformOutput T.outputPath
