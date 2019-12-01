@@ -74,7 +74,7 @@ data PackerManifest
 data PackerBuild
   = PackerBuild
       { buildName :: Text,
-        buildTime :: Text,
+        buildTime :: Int,
         buildArtifact :: Text,
         buildUUID :: Text
       }
