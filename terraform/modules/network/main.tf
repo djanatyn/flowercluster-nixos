@@ -60,3 +60,8 @@ resource "aws_security_group_rule" "dmz_ssh" {
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.dmz_ssh.id
 }
+
+resource "aws_key_pair" "automate" {
+  key_name   = "${var.vpc_name}-automate"
+  public_key = var.public_key
+}

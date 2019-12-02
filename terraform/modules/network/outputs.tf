@@ -14,3 +14,7 @@ output "security_groups" {
     dmz_ssh = aws_security_group.dmz_ssh.id
   }
 }
+
+output "keypair" {
+  value = aws_key_pair.automate.id
+}
