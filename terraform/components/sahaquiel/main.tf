@@ -28,9 +28,11 @@ resource "google_compute_instance" "core" {
   machine_type = "n1-standard-2"
   zone         = "us-east1-b"
 
+  project = module.sahaquiel-nonprod.project.project_id
+
   boot_disk {
     initialize_params {
-      image = "${module.nixos_image.self_link}"
+      image = module.nixos_image.self_link
     }
   }
 
