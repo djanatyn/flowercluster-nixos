@@ -13,11 +13,45 @@ module "org-terraform" {
   ]
 }
 
+module "org-service-account" {
+  source     = "terraform-google-modules/service-accounts/google"
+  version    = "~> 2.0"
+  project_id = module.org-terraform.project.project_id
+  names      = ["gardener"]
+  project_roles = [
+    "${module.org-terraform.project.project_id}=>roles/owner"
+  ]
+}
+
+module "org-iam" {
+  source        = "terraform-google-modules/iam/google//modules/organizations_iam"
+  organizations = ["947273970991"]
+  mode          = "additive"
+
+  bindings = {
+    "roles/owner" = [
+      "serviceAccount:${module.org-service-account.email}"
+    ]
+
+    "roles/resourcemanager.organizationAdmin" = [
+      "serviceAccount:${module.org-service-account.email}"
+    ]
+
+    "roles/storage.admin" = [
+      "serviceAccount:${module.org-service-account.email}"
+    ]
+
+    "roles/compute.xpnAdmin" = [
+      "serviceAccount:${module.org-service-account.email}"
+    ]
+  }
+}
+
 module "org-network" {
   source = "../../modules/network"
 
   project_id   = module.org-terraform.project.project_id
-  network_name = "garden01"
+  network_name = "flowerbed01"
 
   subnets = [
     {
@@ -32,26 +66,5 @@ module "org-network" {
       subnet_region         = "us-east1"
       subnet_private_access = "true"
     }
-  ]
-}
-
-module "sahaquiel" {
-  /*
-  Kiseki no kachi wa
-  "The Value of Miracles"
-  (奇跡の価値は)
-
-  "She said, 'Don't make others suffer for your personal hatred.'"
-  */
-
-  source = "../../modules/domain"
-
-  org_id          = "947273970991"
-  billing_account = "015DC6-23F403-4CEB5F"
-  domain_name     = "sahaquiel"
-
-  shared_vpc = module.org-terraform.project.project_id
-  shared_vpc_subnets = [
-    module.org-network.vpc.subnets["us-east1/internal-01"].self_link
   ]
 }

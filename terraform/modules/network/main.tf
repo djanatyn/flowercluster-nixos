@@ -8,6 +8,8 @@ module "vpc" {
 
   subnets = var.subnets
 
+  shared_vpc_host = true
+
   routes = [
     {
       name              = "egress-internet"
