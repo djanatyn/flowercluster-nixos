@@ -1,67 +1,20 @@
-resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"
+module "vpc" {
+  source  = "terraform-google-modules/network/google"
+  version = "~> 2.2"
 
-  tags = {
-    Name = var.vpc_name
-  }
-}
+  project_id   = var.project_id
+  network_name = var.network_name
+  routing_mode = "GLOBAL"
 
-resource "aws_internet_gateway" "main" {
-  vpc_id = aws_vpc.main.id
+  subnets = var.subnets
 
-  tags = {
-    Name = "main"
-  }
-}
-
-resource "aws_default_route_table" "default" {
-  default_route_table_id = aws_vpc.main.default_route_table_id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.main.id
-  }
-
-  tags = {
-    Name = "default"
-  }
-}
-
-resource "aws_subnet" "dmz" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.0.1.0/24"
-
-  tags = {
-    Name = "dmz"
-  }
-}
-
-resource "aws_subnet" "internal" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.0.2.0/24"
-
-  tags = {
-    Name = "internal"
-  }
-}
-
-resource "aws_security_group" "dmz_ssh" {
-  name        = "default-dmz"
-  description = "Allow SSH into DMZ subnet."
-  vpc_id      = aws_vpc.main.id
-}
-
-resource "aws_security_group_rule" "dmz_ssh" {
-  type      = "ingress"
-  from_port = 22
-  to_port   = 22
-  protocol  = "tcp"
-
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.dmz_ssh.id
-}
-
-resource "aws_key_pair" "automate" {
-  key_name   = "${var.vpc_name}-automate"
-  public_key = var.public_key
+  routes = [
+    {
+      name              = "egress-internet"
+      description       = "route through IGW to access internet"
+      destination_range = "0.0.0.0/0"
+      tags              = "egress-inet"
+      next_hop_internet = "true"
+    }
+  ]
 }
