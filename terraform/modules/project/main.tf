@@ -11,6 +11,7 @@ module "project-factory" {
   random_project_id    = var.project_id == null ? true : false
   project_id           = var.project_id
   org_id               = var.org_id
+  folder_id            = var.folder_id
   billing_account      = var.billing_account
   shared_vpc           = var.shared_vpc
   skip_gcloud_download = true

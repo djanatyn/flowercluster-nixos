@@ -12,6 +12,11 @@ variable "project_name" {
   type = string
 }
 
+variable "folder_id" {
+  type    = string
+  default = ""
+}
+
 variable "org_id" {
   type = string
 }
