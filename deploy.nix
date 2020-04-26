@@ -16,7 +16,7 @@ in {
 
     virtualisation.docker.enable = true;
 
-    environment.systemPackages = with pkgs; [ zsh openjdk8 nomad ];
+    environment.systemPackages = with pkgs; [ zsh openjdk8 nomad vim ];
 
     systemd.services.minecraft-eternal = {
       description = "Minecraft Eternal 1.3.5 Server";
@@ -31,12 +31,34 @@ in {
         User = "minecraft";
         WorkingDirectory = /opt/eternal-lite-1.3.5;
       };
-
     };
 
     networking.firewall.allowedUDPPorts = [ 25565 ];
     networking.firewall.allowedTCPPorts = [ 25565 ];
 
     users.users.minecraft = { isNormalUser = true; };
+
+    environment.etc."nomad-server.hcl".text = ''
+      data_dir  = "/var/lib/nomad"
+
+      server {
+        enabled = true
+        bootstrap_expect = 1
+      }
+    '';
+
+    systemd.services.nomad-server = {
+      description = "Hashicorp Nomad Server";
+
+      wantedBy = [ "multi-user.target" ];
+      after = [ "network.target" ];
+
+      serviceConfig = {
+        ExecStart =
+          "${pkgs.nomad}/bin/nomad agent -config /etc/nomad-server.hcl";
+        Restart = "always";
+        User = "root";
+      };
+    };
   };
 }
