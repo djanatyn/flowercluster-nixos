@@ -12,6 +12,8 @@ in {
 
     networking.hostName = "sahquiel";
 
+    system.stateVersion = "18.08";
+
     virtualisation.docker.enable = true;
 
     environment.systemPackages = with pkgs; [ zsh openjdk8 nomad ];
