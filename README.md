@@ -1,5 +1,9 @@
 # flowercluster-nixos
 
+under construction, moving from AWS -> GCP
+
+---
+
 my digital garden
 
 built with:
