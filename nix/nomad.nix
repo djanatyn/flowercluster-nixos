@@ -1,7 +1,6 @@
 { config, pkgs, ... }: {
   environment.etc."nomad-server.hcl".text = ''
-    data_dir  = "/var/lib/nomad-server"
-    bind_addr = "0.0.0.0"
+    data_dir = "/var/lib/nomad.d"
     datacenter = "dc1"
     ports {
       http = 4646
@@ -14,8 +13,7 @@
   '';
 
   environment.etc."nomad-client.hcl".text = ''
-    data_dir  = "/var/lib/nomad-client"
-    bind_addr = "0.0.0.0"
+    data_dir  = "/var/lib/nomad.d"
     datacenter = "dc1"
     ports {
       http = 4747
@@ -41,6 +39,7 @@
 
   systemd.services.nomad-client = {
     description = "Hashicorp Nomad Client";
+    path = [ pkgs.iproute ];
 
     wantedBy = [ "multi-user.target" ];
     after = [ "network.target" "nomad-server.service" ];

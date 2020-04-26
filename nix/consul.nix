@@ -9,7 +9,7 @@
 
     serviceConfig = {
       ExecStart =
-        "${pkgs.consul}/bin/consul agent -bind=10.0.10.3 -data-dir=/var/lib/consul-server -server";
+        "${pkgs.consul}/bin/consul agent -bind=10.0.10.3 -data-dir=/var/lib/consul.d -server";
       Restart = "always";
       User = "root";
     };
