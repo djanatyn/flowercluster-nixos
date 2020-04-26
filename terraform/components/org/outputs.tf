@@ -23,3 +23,10 @@ output "domains" {
 output "network" {
   value = module.org-network
 }
+
+output "dns" {
+  value = {
+    private = module.dns-private-zone
+    public  = module.dns-public-zone
+  }
+}
