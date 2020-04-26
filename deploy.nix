@@ -9,16 +9,21 @@ in {
   "sahaquiel.flowercluster.io" = { config, pkgs, ... }: {
     imports = [
       <nixpkgs/nixos/modules/virtualisation/google-compute-image.nix>
+      ./nix/consul.nix
       ./nix/nomad.nix
     ];
 
-    networking.hostName = "sahquiel";
-
     system.stateVersion = "18.08";
+
+    networking.hostName = "sahaquiel";
+    networking.firewall.enable = true;
+    networking.firewall.allowedUDPPorts = [ 25565 ];
+    networking.firewall.allowedTCPPorts = [ 25565 ];
+    services.fail2ban.enable = true;
 
     virtualisation.docker.enable = true;
 
-    environment.systemPackages = with pkgs; [ zsh openjdk8 nomad vim ];
+    environment.systemPackages = with pkgs; [ zsh openjdk8 consul nomad vim ];
 
     systemd.services.minecraft-eternal = {
       description = "Minecraft Eternal 1.3.5 Server";
@@ -34,9 +39,6 @@ in {
         WorkingDirectory = /opt/eternal-lite-1.3.5;
       };
     };
-
-    networking.firewall.allowedUDPPorts = [ 25565 ];
-    networking.firewall.allowedTCPPorts = [ 25565 ];
 
     users.users.minecraft = { isNormalUser = true; };
   };
