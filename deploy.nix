@@ -7,8 +7,10 @@ let
   }) { };
 in {
   "sahaquiel.flowercluster.io" = { config, pkgs, ... }: {
-    imports =
-      [ <nixpkgs/nixos/modules/virtualisation/google-compute-image.nix> ];
+    imports = [
+      <nixpkgs/nixos/modules/virtualisation/google-compute-image.nix>
+      ./nix/nomad.nix
+    ];
 
     networking.hostName = "sahquiel";
 
@@ -37,28 +39,5 @@ in {
     networking.firewall.allowedTCPPorts = [ 25565 ];
 
     users.users.minecraft = { isNormalUser = true; };
-
-    environment.etc."nomad-server.hcl".text = ''
-      data_dir  = "/var/lib/nomad"
-
-      server {
-        enabled = true
-        bootstrap_expect = 1
-      }
-    '';
-
-    systemd.services.nomad-server = {
-      description = "Hashicorp Nomad Server";
-
-      wantedBy = [ "multi-user.target" ];
-      after = [ "network.target" ];
-
-      serviceConfig = {
-        ExecStart =
-          "${pkgs.nomad}/bin/nomad agent -config /etc/nomad-server.hcl";
-        Restart = "always";
-        User = "root";
-      };
-    };
   };
 }
