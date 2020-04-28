@@ -25,21 +25,21 @@ in {
 
     environment.systemPackages = with pkgs; [ zsh openjdk8 consul nomad vim ];
 
-    systemd.services.minecraft-eternal = {
-      description = "Minecraft Eternal 1.3.5 Server";
+    # systemd.services.minecraft-eternal = {
+    #   description = "Minecraft Eternal 1.3.5 Server";
 
-      wantedBy = [ "multi-user.target" ];
-      after = [ "network.target" ];
+    #   wantedBy = [ "multi-user.target" ];
+    #   after = [ "network.target" ];
 
-      serviceConfig = {
-        ExecStart =
-          "${pkgs.openjdk8}/bin/java -Xmx5120M -Xms5120M -Dfml.queryResult=confirm -Dfml.readTimeout=120 -jar forge-1.12.2-14.23.5.2847-universal.jar nogui";
-        Restart = "always";
-        User = "minecraft";
-        WorkingDirectory = /opt/eternal-lite-1.3.5;
-      };
-    };
+    #   serviceConfig = {
+    #     ExecStart =
+    #       "${pkgs.openjdk8}/bin/java -Xmx5120M -Xms5120M -Dfml.queryResult=confirm -Dfml.readTimeout=120 -jar forge-1.12.2-14.23.5.2847-universal.jar nogui";
+    #     Restart = "always";
+    #     User = "minecraft";
+    #     WorkingDirectory = /opt/eternal-lite-1.3.5;
+    #   };
+    # };
 
-    users.users.minecraft = { isNormalUser = true; };
+    # users.users.minecraft = { isNormalUser = true; };
   };
 }
