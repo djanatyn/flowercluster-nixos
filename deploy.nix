@@ -15,31 +15,34 @@ in {
 
     system.stateVersion = "18.08";
 
+    virtualisation.docker.enable = true;
+
+    # networking
+    # ==========
     networking.hostName = "sahaquiel";
     networking.firewall.enable = true;
     networking.firewall.allowedUDPPorts = [ 25565 ];
     networking.firewall.allowedTCPPorts = [ 25565 ];
     services.fail2ban.enable = true;
 
-    virtualisation.docker.enable = true;
+    # monitoring
+    # ==========
+    services.grafana.enable = true;
+    services.prometheus.enable = true;
+    services.prometheus.exporters.node.enable = true;
+    services.prometheus.scrapeConfigs = [{
+      job_name = "node_scraper";
+      static_configs = [{
+        targets = [
+          "${
+            toString config.services.prometheus.exporters.node.listenAddress
+          }:${toString config.services.prometheus.exporters.node.port}"
+        ];
+      }];
+    }];
 
+    # packages
+    # ========
     environment.systemPackages = with pkgs; [ zsh openjdk8 consul nomad vim ];
-
-    # systemd.services.minecraft-eternal = {
-    #   description = "Minecraft Eternal 1.3.5 Server";
-
-    #   wantedBy = [ "multi-user.target" ];
-    #   after = [ "network.target" ];
-
-    #   serviceConfig = {
-    #     ExecStart =
-    #       "${pkgs.openjdk8}/bin/java -Xmx5120M -Xms5120M -Dfml.queryResult=confirm -Dfml.readTimeout=120 -jar forge-1.12.2-14.23.5.2847-universal.jar nogui";
-    #     Restart = "always";
-    #     User = "minecraft";
-    #     WorkingDirectory = /opt/eternal-lite-1.3.5;
-    #   };
-    # };
-
-    # users.users.minecraft = { isNormalUser = true; };
   };
 }
