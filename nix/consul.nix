@@ -1,6 +1,15 @@
 { config, pkgs, ... }:
 
 {
+  environment.etc."consul-server.hcl".text = ''
+    {
+      "data_dir": "/var/lib/consul.d",
+      "bind_addr": "{{ GetInterfaceIP \"eth0\" }}",
+      "ui": true,
+      "server": true
+    }
+  '';
+
   systemd.services.consul-server = {
     description = "consul server";
 
@@ -9,7 +18,7 @@
 
     serviceConfig = {
       ExecStart =
-        "${pkgs.consul}/bin/consul agent -bind=10.0.10.3 -data-dir=/var/lib/consul.d -server";
+        "${pkgs.consul}/bin/consul agent -config-file /etc/consul-server.hcl -bootstrap";
       Restart = "always";
       User = "root";
     };
