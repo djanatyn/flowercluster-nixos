@@ -28,7 +28,7 @@
     description = "Hashicorp Nomad Server";
 
     wantedBy = [ "multi-user.target" ];
-    after = [ "network.target" ];
+    after = [ "network.target" "consul.service" ];
 
     serviceConfig = {
       ExecStart = "${pkgs.nomad}/bin/nomad agent -config /etc/nomad-server.hcl";
