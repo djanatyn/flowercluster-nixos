@@ -10,9 +10,8 @@ job "gitlab" {
       resources {
         network {
           mode = "host"
-          port "http" {
-            static = 80
-          }
+          port "http" {}
+          port "ssh" {}
         }
 
         memory = 4096
