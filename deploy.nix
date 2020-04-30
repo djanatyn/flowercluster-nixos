@@ -22,6 +22,8 @@ in {
     # networking
     # ==========
     networking.hostName = "sahaquiel";
+    networking.interfaces.eth0.useDHCP = true;
+
     networking.firewall.enable = true;
     networking.firewall.allowedUDPPorts = [ 25565 ];
     networking.firewall.allowedTCPPorts = [ 25565 ];
