@@ -29,6 +29,8 @@ in {
     networking.firewall.allowedTCPPorts = [ 25565 ];
     services.fail2ban.enable = true;
 
+    services.traefik.enable = true;
+
     # sudo
     # ====
     security.sudo.wheelNeedsPassword = false;
