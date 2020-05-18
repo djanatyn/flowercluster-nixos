@@ -6,7 +6,7 @@ let
     sha256 = "1298gihffd8ic5qvjl050m8lmcqddxnd1mxhf11imdsl3qkzy002";
   }) { };
 in {
-  "sahaquiel.flowercluster.io" = { config, pkgs, ... }: {
+  "sahaquiel.flowercluster.io" = { config, pkgs, lib, ... }: {
     imports = [
       <nixpkgs/nixos/modules/virtualisation/google-compute-image.nix>
       ./nix/consul.nix
@@ -15,9 +15,59 @@ in {
       ./nix/users.nix
     ];
 
+    # system state is from 18.08
     system.stateVersion = "18.08";
 
+    # morph deployment secrets
+    deployment = {
+      secrets = {
+        "terraria-password" = {
+          source = "/var/secrets/terraria-password";
+          destination = "/var/secrets/terraria-password";
+          owner.user = "terraria";
+          owner.group = "terraria";
+          permissions = "0600";
+        };
+      };
+    };
+
+    # nixpkgs
+    nixpkgs.config = {
+      allowUnfree = true;
+      packageOverrides = pkgs: {
+        terraria-server = pkgs.terraria-server.overrideAttrs (old: rec {
+          version = "1.4.0.2";
+
+          src = pkgs.fetchurl {
+            url =
+              "https://terraria.org/system/dedicated_servers/archives/000/000/036/original/terraria-server-1402.zip";
+            sha256 = "0j8vp537j0fnmh37cr0ypjb3wpv8099h5g4517v19vsx1fdjf08g";
+          };
+        });
+      };
+    };
+
+    # terraria: journey's end!
+    services.terraria.enable = true;
+    services.terraria.password =
+      lib.fileContents /var/secrets/terraria-password;
+
+    # enable docker
     virtualisation.docker.enable = true;
+
+    # dante socks5 proxy
+    services.dante.enable = true;
+    services.dante.config = ''
+      # socksmethod: none // for non-authentication
+      socksmethod: username
+
+      socks pass {
+              from: 0.0.0.0/0 to: 0.0.0.0/0
+              command: bind connect udpassociate
+              log: error connect disconnect
+              socksmethod: username
+      }
+    '';
 
     # networking
     # ==========
@@ -25,8 +75,8 @@ in {
     networking.interfaces.eth0.useDHCP = true;
 
     networking.firewall.enable = true;
-    networking.firewall.allowedUDPPorts = [ 25565 ];
-    networking.firewall.allowedTCPPorts = [ 25565 ];
+    networking.firewall.allowedUDPPorts = [ 25565 7777 8388 ];
+    networking.firewall.allowedTCPPorts = [ 25565 7777 8388 ];
     services.fail2ban.enable = true;
 
     services.traefik.enable = true;
@@ -37,6 +87,14 @@ in {
 
     # packages
     # ========
-    environment.systemPackages = with pkgs; [ zsh openjdk8 consul nomad vim ];
+    environment.systemPackages = with pkgs; [
+      zsh
+      openjdk8
+      consul
+      nomad
+      vim
+      exa
+      git
+    ];
   };
 }
