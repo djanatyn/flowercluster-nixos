@@ -40,8 +40,8 @@ in {
 
           src = pkgs.fetchurl {
             url =
-              "https://terraria.org/system/dedicated_servers/archives/000/000/036/original/terraria-server-1402.zip";
-            sha256 = "0j8vp537j0fnmh37cr0ypjb3wpv8099h5g4517v19vsx1fdjf08g";
+              "https://terraria.org/system/dedicated_servers/archives/000/000/037/original/terraria-server-1403.zip";
+            sha256 = "1g9rd0a40gsljk8xp3bkvwy8ngywjzk8chf2x9l43s2kf40ib0p8";
           };
         });
       };
