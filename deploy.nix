@@ -39,12 +39,12 @@ in {
       allowUnfree = true;
       packageOverrides = pkgs: {
         terraria-server = pkgs.terraria-server.overrideAttrs (old: rec {
-          version = "1.4.0.2";
+          version = "1.4.0.4";
 
           src = pkgs.fetchurl {
             url =
-              "https://terraria.org/system/dedicated_servers/archives/000/000/037/original/terraria-server-1403.zip";
-            sha256 = "1g9rd0a40gsljk8xp3bkvwy8ngywjzk8chf2x9l43s2kf40ib0p8";
+              "https://terraria.org/system/dedicated_servers/archives/000/000/038/original/terraria-server-1404.zip";
+            sha256 = "09zkadjd04gbx1yvwpqmm89viydwxqgixbqhbqncb94qb2z5gfxk";
           };
         });
       };
