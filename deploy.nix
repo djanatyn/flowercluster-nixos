@@ -33,6 +33,8 @@ in {
     # latest kernel
     boot.kernelPackages = pkgs.linuxPackages_latest;
 
+    services.postgresql = { enable = true; };
+
     # nixpkgs
     nixpkgs.config = {
       allowUnfree = true;
