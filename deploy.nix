@@ -58,20 +58,6 @@ in {
     # enable docker
     virtualisation.docker.enable = true;
 
-    # dante socks5 proxy
-    services.dante.enable = true;
-    services.dante.config = ''
-      # socksmethod: none // for non-authentication
-      socksmethod: username
-
-      socks pass {
-              from: 0.0.0.0/0 to: 0.0.0.0/0
-              command: bind connect udpassociate
-              log: error connect disconnect
-              socksmethod: username
-      }
-    '';
-
     # networking
     # ==========
     networking.hostName = "sahaquiel";
