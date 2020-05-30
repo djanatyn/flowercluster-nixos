@@ -31,6 +31,9 @@ in {
       };
     };
 
+    # latest kernel
+    boot.kernelPackages = pkgs.linuxPackages_latest;
+
     # nixpkgs
     nixpkgs.config = {
       allowUnfree = true;
