@@ -1,12 +1,11 @@
 let
-  # Pin the deployment package-set to a specific version of nixpkgs
-  pkgs = import (builtins.fetchTarball {
-    url =
-      "https://github.com/nixos/nixpkgs/archive/f0da3b5e94ab0dc27ecd8f3c8ea8693a16b8c225.tar.gz";
-    sha256 = "1298gihffd8ic5qvjl050m8lmcqddxnd1mxhf11imdsl3qkzy002";
+  pkgs = import (builtins.fetchGit {
+    url = "https://github.com/nixos/nixpkgs.git";
+    rev = "0f114432d4a9399e0b225d5be1599c7ebc5e2772";
+    ref = "master";
   }) { };
 in {
-  "sahaquiel.flowercluster.io" = { config, pkgs, lib, ... }: {
+  "sahaquiel.flowercluster.io" = { config, lib, ... }: {
     imports = [
       <nixpkgs/nixos/modules/virtualisation/google-compute-image.nix>
       ./nix/consul.nix
