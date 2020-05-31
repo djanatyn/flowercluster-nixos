@@ -1,17 +1,29 @@
 # flowercluster-nixos
 
-under construction, moving from AWS -> GCP
+my digital garden
+
+## running services
+* [terraria 1.4.0.4](https://terraria.org/)
+<img src="static/terraria.png" align=center />
+
+## tools
+built with:
+* [nixos](https://nixos.org/nixos)
+* [krops](https://cgit.krebsco.de/krops/about/)
+* [stack](https://docs.haskellstack.org/en/stable/README/) + [shake](https://shakebuild.com/)
+* [terraform](https://www.terraform.io/)
+
+## deploying
+to deploy:
+``` sh
+$(nix-build ./deploy.nix -A sahaquiel)
+```
+## notes
+* `shake` build system is outdated for now.
 
 ---
 
-my digital garden
-
-built with:
-* [stack](https://docs.haskellstack.org/en/stable/README/) + [shake](https://shakebuild.com/)
-* [terraform](https://www.terraform.io/)
-* [packer](https://www.packer.io)
-* [nixos](https://nixos.org/nixos)
-
+## old build system
 flowercluster uses shake for a build system. to compile the build system:
 
 ```sh
@@ -22,8 +34,8 @@ to build flowercluster:
 stack build && \
   stack exec -- grow build
 ```
----
 
+## old build system motivation
 The Grow module compiles to a build system used to maintain flowercluster, a
 digital garden.
 
