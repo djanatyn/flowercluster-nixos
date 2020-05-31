@@ -9,6 +9,10 @@ my digital garden
 * [prometheus / grafana](https://prometheus.io/docs/visualization/grafana/)
 <img src="static/grafana.png" align="center" />
 
+## retired services
+* [mc eternal](https://www.curseforge.com/minecraft/modpacks/minecraft-eternal)
+<img src="static/minecraft.png" align="center" />
+
 ## tools
 built with:
 * [nixos](https://nixos.org/nixos)
