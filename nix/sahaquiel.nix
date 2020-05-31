@@ -24,7 +24,16 @@ in {
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # enable postgres
-  services.postgresql = { enable = true; };
+  # https://nixos.wiki/wiki/PostgreSQL
+  services.postgresql = {
+    enable = true;
+    package = pkgs.postgresql_10;
+    ensureDatabases = [ "root" "sourcehut" ];
+    ensureUsers = [{
+      name = "root";
+      ensurePermissions = { "DATABASE root" = "ALL PRIVILEGES"; };
+    }];
+  };
 
   # nixpkgs
   nixpkgs.config = {
