@@ -36,20 +36,7 @@ in {
   };
 
   # nixpkgs
-  nixpkgs.config = {
-    allowUnfree = true;
-    packageOverrides = pkgs: {
-      terraria-server = pkgs.terraria-server.overrideAttrs (old: rec {
-        version = "1.4.0.4";
-
-        src = pkgs.fetchurl {
-          url =
-            "https://terraria.org/system/dedicated_servers/archives/000/000/038/original/terraria-server-1404.zip";
-          sha256 = "09zkadjd04gbx1yvwpqmm89viydwxqgixbqhbqncb94qb2z5gfxk";
-        };
-      });
-    };
-  };
+  nixpkgs.config.allowUnfree = true;
 
   # terraria: journey's end!
   services.terraria.enable = true;
