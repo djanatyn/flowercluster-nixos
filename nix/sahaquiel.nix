@@ -75,5 +75,6 @@ in {
     vim
     exa
     git
+    python
   ];
 }

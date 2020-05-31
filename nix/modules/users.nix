@@ -11,6 +11,7 @@
   };
 
   home-manager.users.djanatyn = {
+    home.packages = with pkgs; [ chezmoi pass ];
     programs.git = {
       enable = true;
       userName = "djanatyn";
