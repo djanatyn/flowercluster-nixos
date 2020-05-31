@@ -4,7 +4,10 @@ my digital garden
 
 ## running services
 * [terraria 1.4.0.4](https://terraria.org/)
-<img src="static/terraria.png" align=center />
+<img src="static/terraria.png" align="center" />
+
+* [prometheus / grafana](https://prometheus.io/docs/visualization/grafana/)
+<img src="static/grafana.png" align="center" />
 
 ## tools
 built with:
