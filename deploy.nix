@@ -15,6 +15,11 @@ let
       };
       nixos-config.file = toString ./nix/sahaquiel.nix;
       modules.file = toString ./nix/modules;
+
+      secrets.pass = {
+        dir = toString /var/secrets;
+        name = "sahaquiel";
+      };
     }];
   };
 in {
