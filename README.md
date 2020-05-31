@@ -1,4 +1,4 @@
-# flowercluster-nixos
+# flowercluster.io
 
 my digital garden
 
