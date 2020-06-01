@@ -18,6 +18,9 @@ in {
   # latest kernel
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
+  # enable sourcehut
+  flowercluster.services.sourcehut.enable = true;
+
   # enable postgres
   # https://nixos.wiki/wiki/PostgreSQL
   services.postgresql = {
@@ -67,12 +70,5 @@ in {
     exa
     git
     python
-    sourcehut.gitsrht
-    sourcehut.todosrht
-    sourcehut.mansrht
-    sourcehut.metasrht
-    sourcehut.pastesrht
-    sourcehut.dispatchsrht
-    sourcehut.buildsrht
   ];
 }
