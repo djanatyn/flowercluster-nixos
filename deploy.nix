@@ -10,8 +10,8 @@ let
   sources = {
     sahaquiel = lib.evalSource [{
       nixpkgs.git = {
-        url = "https://github.com/nixos/nixpkgs.git";
-        ref = "master";
+        url = "https://github.com/nixos/nixpkgs";
+        ref = "20.03";
       };
       nixos-config.file = toString ./nix/sahaquiel.nix;
       modules.file = toString ./nix/modules;
