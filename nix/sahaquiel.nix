@@ -1,10 +1,5 @@
 { config, pkgs, lib, ... }:
 let
-  pkgs = import (builtins.fetchGit {
-    url = "https://github.com/nixos/nixpkgs.git";
-    rev = "0f114432d4a9399e0b225d5be1599c7ebc5e2772";
-    ref = "master";
-  }) { };
   home-manager = builtins.fetchGit {
     url = "https://github.com/rycee/home-manager.git";
     rev = "8bbefa77f7e95c80005350aeac6fe425ce47c288";
