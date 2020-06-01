@@ -67,5 +67,12 @@ in {
     exa
     git
     python
+    sourcehut.gitsrht
+    sourcehut.todosrht
+    sourcehut.mansrht
+    sourcehut.metasrht
+    sourcehut.pastesrht
+    sourcehut.dispatchsrht
+    sourcehut.buildsrht
   ];
 }
