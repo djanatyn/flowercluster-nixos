@@ -1,4 +1,4 @@
-{ config, pkgs, ... }: {
+{ config, lib, pkgs, ... }: {
   users.users.djanatyn = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" "docker" ];
@@ -11,7 +11,13 @@
   };
 
   home-manager.users.djanatyn = {
-    home.packages = with pkgs; [ chezmoi pass ];
+    home.packages = with pkgs; [ chezmoi pass tmuxp ];
+
+    home.file.".tmuxp".text = lib.generators.toYAML { } {
+      session_name = "sahaquiel";
+      windows = [{ window-name = "systemctl"; }];
+    };
+
     programs.git = {
       enable = true;
       userName = "djanatyn";
