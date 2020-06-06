@@ -13,7 +13,7 @@
   home-manager.users.djanatyn = {
     home.packages = with pkgs; [ chezmoi pass tmuxp ];
 
-    home.file.".tmuxp".text = lib.generators.toYAML { } {
+    home.file.".tmuxp/sahaquiel.yaml".text = lib.generators.toYAML { } {
       session_name = "sahaquiel";
       windows = [{ window-name = "systemctl"; }];
     };

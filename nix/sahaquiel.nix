@@ -72,5 +72,6 @@ in {
     exa
     git
     python
+    tmux
   ];
 }
