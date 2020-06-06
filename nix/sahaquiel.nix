@@ -18,8 +18,10 @@ in {
   # latest kernel
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  # enable sourcehut
+  # flowercluster services
+  # ======================
   flowercluster.services.sourcehut.enable = true;
+  flowercluster.services.monitoring.enable = true;
 
   # enable postgres
   # https://nixos.wiki/wiki/PostgreSQL
