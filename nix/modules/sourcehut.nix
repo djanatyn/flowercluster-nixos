@@ -48,6 +48,20 @@ in {
       "meta.sr.ht::billing" = { enabled = "no"; };
     };
 
+    systemd.services.metasrht = {
+      description = "meta.sr.ht";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "network.target" ];
+
+      serviceConfig = {
+        ExecStart =
+          "${pkgs.sourcehut.python}/bin/python ${pkgs.sourcehut.metasrht.src}/run.py";
+        Restart = "always";
+        User = "root";
+        WorkingDirectory = "${pkgs.sourcehut.metasrht.src}";
+      };
+    };
+
     environment.systemPackages = with pkgs; [
       sourcehut.gitsrht
       sourcehut.todosrht
