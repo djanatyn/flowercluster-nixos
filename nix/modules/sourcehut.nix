@@ -43,6 +43,8 @@ in {
         user-invites = 5;
       };
 
+      "meta.sr.ht::aliases" = { };
+
       "meta.sr.ht::billing" = { enabled = "no"; };
     };
 
