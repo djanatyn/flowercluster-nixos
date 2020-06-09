@@ -54,8 +54,11 @@ in {
       after = [ "network.target" ];
 
       serviceConfig = {
-        ExecStart =
-          "${pkgs.sourcehut.python}/bin/python ${pkgs.sourcehut.metasrht.src}/run.py";
+        ExecStart = "${
+            with pkgs;
+            python3.withPackages
+            (p: [ sourcehut.metasrht.propagatedBuildInputs ])
+          }/bin/python ${pkgs.sourcehut.metasrht.src}/run.py";
         Restart = "always";
         User = "root";
         WorkingDirectory = "${pkgs.sourcehut.metasrht.src}";
