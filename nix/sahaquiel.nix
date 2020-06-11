@@ -52,7 +52,7 @@ in {
   networking.interfaces.eth0.useDHCP = true;
 
   networking.firewall.enable = true;
-  networking.firewall.allowedUDPPorts = [ 25565 7777 8388 ];
+  networking.firewall.allowedUDPPorts = [ 25565 7777 8388 34197 ];
   networking.firewall.allowedTCPPorts = [ 25565 7777 8388 ];
   services.fail2ban.enable = true;
 
