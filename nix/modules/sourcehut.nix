@@ -56,8 +56,7 @@ in {
       serviceConfig = {
         ExecStart = "${
             with pkgs;
-            python3.withPackages
-            (p: [ sourcehut.metasrht.propagatedBuildInputs ])
+            python3.withPackages (p: sourcehut.metasrht.propagatedBuildInputs)
           }/bin/python ${pkgs.sourcehut.metasrht.src}/run.py";
         Restart = "always";
         User = "root";
