@@ -22,6 +22,7 @@ in {
   # ======================
   flowercluster.services.sourcehut.enable = true;
   flowercluster.services.monitoring.enable = true;
+  flowercluster.services.factorio.enable = true;
 
   # enable postgres
   # https://nixos.wiki/wiki/PostgreSQL

@@ -13,7 +13,13 @@ let
     });
   };
 in {
-  imports =
-    [ ./consul.nix ./monitoring.nix ./nomad.nix ./users.nix ./sourcehut.nix ];
+  imports = [
+    ./consul.nix
+    ./monitoring.nix
+    ./nomad.nix
+    ./users.nix
+    ./sourcehut.nix
+    ./factorio.nix
+  ];
   config = { nixpkgs.overlays = [ overlay ]; };
 }
