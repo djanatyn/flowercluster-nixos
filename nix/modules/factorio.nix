@@ -10,6 +10,6 @@ in {
     services.factorio.enable = true;
 
     services.factorio.password =
-      lib.fileContents /var/secrets/factorio/password;
+      lib.fileContents /var/src/secrets/factorio/password;
   };
 }
